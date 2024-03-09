@@ -5,7 +5,7 @@ import pickle
 app = Flask(__name__)
 
 # Load your pre-trained model
-model = joblib.load('/workspaces/SALES-DEPLOYMENT/model/linear_regression_model.pkl')  # Adjust the filename as per your model file
+model = joblib.load('/workspaces/SALES-DEPLOYMENT/model/linear_regression_model.pkl')# Adjust the filename as per your model file
 
 # Define your prediction function using the loaded model
 def predict_sales(product, branch, city, payment, customerType):

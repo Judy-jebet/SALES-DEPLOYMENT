@@ -5,7 +5,7 @@ import pickle
 app = Flask(__name__)
 
 # Load your pre-trained model
-with open('linear_regression_model.pkl', 'rb') as file:
+with open('linear_regression_model(1).pkl', 'rb') as file:
     model = pickle.load(file)
 
 # Define your prediction function using the loaded model

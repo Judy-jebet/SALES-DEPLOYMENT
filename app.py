@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, jsonify
-import joblib  # Use joblib to load scikit-learn models, or import your model loading library
+import joblib  
 import pickle
 
 app = Flask(__name__)
 
 # Load your pre-trained model
-model = joblib.load('/workspaces/SALES-DEPLOYMENT/model/linear_regression_model.pkl')# Adjust the filename as per your model file
+with open('/workspaces/SALES-DEPLOYMENT/model/linear_regression_model.pkl', 'rb') as file:
+    model = pickle.load(file)
 
 # Define your prediction function using the loaded model
 def predict_sales(product, branch, city, payment, customerType):

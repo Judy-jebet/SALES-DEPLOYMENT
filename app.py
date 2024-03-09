@@ -1,21 +1,30 @@
 from flask import Flask, render_template, request, jsonify
 import joblib  
 import pickle
+import logging
 
 app = Flask(__name__)
 
+# Configure logging
+logging.basicConfig(filename='app.log', level=logging.INFO)
+
 # Load your pre-trained model
-with open('linear_regression_model(1).pkl', 'rb') as file:
-    model = pickle.load(file)
+try:
+    with open('linear_regression_model(1).pkl', 'rb') as file:
+        model = pickle.load(file)
+        logging.info("Model loaded successfully")
+except FileNotFoundError:
+    logging.error("Model file not found")
 
 # Define your prediction function using the loaded model
 def predict_sales(product, branch, city, payment, customerType):
-    # Your preprocessing steps here if needed
-    # Example: Convert categorical variables to numerical using one-hot encoding
-
-    # Make prediction using the loaded model
-    prediction = model.predict([[product, branch, city, payment, customerType]])  # Adjust as per your model input
-    return prediction[0]  # Return the predicted value
+    try:
+        # Make prediction using the loaded model
+        prediction = model.predict([[product, branch, city, payment, customerType]])  # Adjust as per your model input
+        return prediction[0]  # Return the predicted value
+    except Exception as e:
+        logging.error(f"Prediction failed: {str(e)}")
+        return None
 
 @app.route('/', methods=['GET', 'POST'])
 def predict():
@@ -28,11 +37,13 @@ def predict():
 
         # Make prediction
         predicted_sales = predict_sales(product, branch, city, payment, customerType)
-
-        return jsonify({'predicted_sales': predicted_sales})  # Return prediction as JSON response
+        
+        if predicted_sales is not None:
+            return jsonify({'predicted_sales': predicted_sales})  # Return prediction as JSON response
+        else:
+            return jsonify({'error': 'Prediction failed. Please check server logs for details.'}), 500
 
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8090, debug=True)
-
+    app.run(host="0.0.0.0", port=9080, debug=True)

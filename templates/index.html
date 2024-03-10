@@ -8,77 +8,77 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
+            padding: 20px;
+            background-color: #f2f2f2;
         }
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
             background-color: #fff;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h1 {
+        h2 {
             text-align: center;
-            margin-bottom: 20px;
+            color: #333;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         label {
             display: block;
             font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
         }
         select {
             width: 100%;
             padding: 8px;
-            border-radius: 5px;
             border: 1px solid #ccc;
-            outline: none;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
         button {
+            padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
         }
         button:hover {
             background-color: #45a049;
         }
-        .prediction {
+        #result {
             margin-top: 20px;
-            font-weight: bold;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+        #result h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        #result strong {
+            color: #4CAF50;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Supermarket Sales Prediction</h1>
+        <h2>Supermarket Sales Prediction</h2>
         <div class="form-group">
-            <label for="product">Select Product Line:</label>
-            <select id="product">
-                <option value="Electronic Accessories">Electronic Accessories</option>
-                <option value="Fashion Accessories">Fashion Accessories</option>
-                <option value="Food and Beverages">Food and Beverages</option>
-                <option value="Health and Beauty">Health and Beauty</option>
-                <option value="Home and Lifestyle">Home and Lifestyle</option>
-                <option value="Sports and Travel">Sports and Travel</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="branch">Select Branch:</label>
+            <label for="branch">Branch:</label>
             <select id="branch">
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
+                <option value="A">Branch A</option>
+                <option value="B">Branch B</option>
+                <option value="C">Branch C</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="city">Select City:</label>
+            <label for="city">City:</label>
             <select id="city">
                 <option value="Yangon">Yangon</option>
                 <option value="Naypyitaw">Naypyitaw</option>
@@ -86,52 +86,99 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="payment">Select Payment Method:</label>
-            <select id="payment">
-                <option value="Cash">Cash</option>
-                <option value="Credit Card">Credit Card</option>
-                <option value="Ewallet">Ewallet</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="customerType">Select Customer Type:</label>
-            <select id="customerType">
+            <label for="customer-type">Customer Type:</label>
+            <select id="customer-type">
                 <option value="Member">Member</option>
                 <option value="Normal">Normal</option>
             </select>
         </div>
-        <button id="predictButton">Predict</button>
-        <div class="prediction" id="predictionResult"></div>
+        <div class="form-group">
+            <label for="gender">Gender:</label>
+            <select id="gender">
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="product-line">Product Line:</label>
+            <select id="product-line">
+                <option value="Health and beauty">Health and beauty</option>
+                <option value="Electronic accessories">Electronic accessories</option>
+                <option value="Home and lifestyle">Home and lifestyle</option>
+                <option value="Sports and travel">Sports and travel</option>
+                <!-- Add more options if needed -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="payment-method">Payment Method:</label>
+            <select id="payment-method">
+                <option value="Cash">Cash</option>
+                <option value="Credit card">Credit card</option>
+                <option value="Ewallet">Ewallet</option>
+            </select>
+        </div>
+        <button onclick="predictSales()">Predict Sales</button>
+        <div id="result"></div>
     </div>
 
     <script>
-        document.getElementById('predictButton').addEventListener('click', function() {
-            var product = document.getElementById('product').value;
-            var branch = document.getElementById('branch').value;
-            var city = document.getElementById('city').value;
-            var payment = document.getElementById('payment').value;
-            var customerType = document.getElementById('customerType').value;
+        function predictSales() {
+            // Get selected values
+            var branch = document.getElementById("branch").value;
+            var city = document.getElementById("city").value;
+            var customerType = document.getElementById("customer-type").value;
+            var gender = document.getElementById("gender").value;
+            var productLine = document.getElementById("product-line").value;
+            var paymentMethod = document.getElementById("payment-method").value;
 
-            // Here you can implement your prediction logic based on selected values
-            // For demonstration purposes, let's assume we predict based on product line, city, and customer type
-            var genderPreference = predictGenderPreference(product, branch, city, payment, customerType);
-            var predictionResult = genderPreference === 'male' ? 'Male preferences predicted.' : 'Female preferences predicted.';
-            
-            document.getElementById('predictionResult').textContent = predictionResult;
-        });
+            // Check if the selected product line is suitable for the selected gender
+            if (!isGenderPreferenceValid(gender, productLine)) {
+                alert("Invalid preference. This product may not be suitable for the selected gender.");
+                return;
+            }
 
-        // Dummy prediction function, replace with actual prediction logic
-        function predictGenderPreference(product, branch, city, payment, customerType) {
-            // Dummy logic based on product line, city, and customer type
-            if (product === 'Electronic Accessories' && city === 'Yangon' && customerType === 'Member') {
-                return 'male';
-            } else if (product === 'Fashion Accessories' && city === 'Naypyitaw' && customerType === 'Normal') {
-                return 'female';
+            // Simulate prediction (replace this with actual prediction logic)
+            var totalPrice = predictTotalSales(branch, city, customerType, gender, productLine);
+
+            // Display the result
+            var result = "Branch: " + branch + "<br>" +
+                         "City: " + city + "<br>" +
+                         "Customer Type: " + customerType + "<br>" +
+                         "Gender: " + gender + "<br>" +
+                         "Product Line: " + productLine + "<br>" +
+                         "Payment Method: " + paymentMethod + "<br>" +
+                         "<strong>Total Sales: $" + totalPrice.toFixed(2) + "</strong>";
+
+            document.getElementById("result").innerHTML = "<h3>Prediction Result</h3>" + result;
+        }
+
+        function predictTotalSales(branch, city, customerType, gender, productLine) {
+            // Add your prediction logic here
+            // This function should return the predicted total sales based on the provided parameters
+            // You can use machine learning models, statistical methods, or any other approach
+            // For simplicity, let's return a random value for demonstration
+            return Math.random() * 1000;
+        }
+
+        function isGenderPreferenceValid(gender, productLine) {
+            // Define gender preferences for product lines
+            var genderPreferences = {
+                "Female": ["Health and beauty", "Home and lifestyle"],
+                "Male": ["Electronic accessories", "Sports and travel"]
+            };
+
+            // Check if the selected product line is suitable for the selected gender
+            if (genderPreferences[gender] && genderPreferences[gender].includes(productLine)) {
+                return true;
             } else {
-                // Default prediction
-                return 'female';
+                return false;
             }
         }
     </script>
 </body>
 </html>
+
+
+
+
+
